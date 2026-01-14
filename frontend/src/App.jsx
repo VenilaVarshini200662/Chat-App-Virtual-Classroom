@@ -7,7 +7,7 @@ const BACKEND_HTTP = "https://chat-application-x3vg.onrender.com";
 export default function App() {
   const socketRef = useRef(null);
 
-  const [stage, setStage] = useState("home");
+  const [stage, setStage] = useState("home"); // home | chat
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [roomInput, setRoomInput] = useState("");
@@ -21,14 +21,19 @@ export default function App() {
       return alert("Enter room code");
 
     setRole(selectedRole);
-    setMessages([]); 
+    setMessages([]);
 
     const socket = new WebSocket(BACKEND_WS);
     socketRef.current = socket;
 
     socket.onopen = () => {
       if (selectedRole === "mentor") {
-        socket.send(JSON.stringify({ type: "create-room" }));
+        socket.send(
+          JSON.stringify({
+            type: "create-room",
+            name: name
+          })
+        );
       } else {
         socket.send(
           JSON.stringify({
@@ -51,13 +56,13 @@ export default function App() {
         setStage("chat");
       }
 
-      // CHAT HISTORY (sent once on join)
+      // CHAT HIST
       if (data.type === "history") {
-        setMessages(data.messages);
+        setMessages(data.messages || []);
         return;
       }
 
-      //  LIVE CHAT
+      //LIVE CHAT
       if (data.type === "chat") {
         setMessages((prev) => [...prev, data]);
       }
@@ -69,7 +74,7 @@ export default function App() {
   };
 
   const sendMessage = () => {
-    if (!message.trim()) return;
+    if (!message.trim() || !socketRef.current) return;
 
     socketRef.current.send(
       JSON.stringify({
@@ -85,7 +90,7 @@ export default function App() {
     window.open(`${BACKEND_HTTP}/download-notes/${room}`);
   };
 
-  /*  HOME PAGE */
+  /* HOME PAGE */
   if (stage === "home") {
     return (
       <div className="center">
@@ -113,11 +118,13 @@ export default function App() {
     );
   }
 
-  /*  CHAT PAGE */
+  /* CHAT PAGE */
   return (
     <div className="app">
       <div className="header">
-        <span>{role === "mentor" ? "Mentor" : "Student"} Classroom</span>
+        <span>
+          {role === "mentor" ? "Mentor" : "Student"}: {name}
+        </span>
         <span>Room: {room}</span>
       </div>
 
