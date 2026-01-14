@@ -1,0 +1,162 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+}
+
+/*  HOME PAGE */
+.center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-card {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.home-card h2 {
+  color: #10600d;
+  margin-bottom: 20px;
+}
+
+.home-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.btn-group button {
+  width: 48%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #067726;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-group button:hover {
+  background: #64c47f;
+}
+
+/*  CHAT PAGE  */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 15px;
+  background: #128f27;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.downloadBtn {
+  background: #87403b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.downloadBtn:hover {
+  background: #2e7d32;
+}
+
+/* Chat area */
+.chatBox {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: #f1f5f9;
+}
+
+.msg {
+  max-width: 70%;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.msg.mentor {
+  background: #e3f2fd;
+  align-self: flex-start;
+}
+
+.msg.student {
+  background: #c8e6c9;
+  align-self: flex-end;
+}
+
+/* Input */
+.inputBox {
+  display: flex;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #ccc;
+}
+
+.inputBox input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.inputBox button {
+  margin-left: 10px;
+  padding: 12px 20px;
+  background: #067726;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Mobile friendly */
+@media (max-width: 600px) {
+  .msg {
+    max-width: 85%;
+  }
+}
+.msg.my {
+  align-self: flex-end;
+  background: #dcf8c6;   
+}
+
+.msg.other {
+  align-self: flex-start;
+  background: #e3f2fd;
+}
