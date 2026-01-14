@@ -17,12 +17,12 @@ const wss = new WebSocket.Server({ server });
 global.rooms = global.rooms || {};
 const rooms = global.rooms;
 
-/*Health Check*/
+/* Health Check */
 app.get("/", (req, res) => {
   res.send("Chat backend running");
 });
 
-/*PDF Download */
+/* PDF Download */
 app.get("/download-notes/:room", (req, res) => {
   const roomCode = req.params.room;
   const room = rooms[roomCode];
@@ -56,9 +56,14 @@ wss.on("connection", (ws) => {
   let currentName = null;
 
   ws.on("message", (data) => {
-    const msg = JSON.parse(data);
+    let msg;
+    try {
+      msg = JSON.parse(data);
+    } catch {
+      return;
+    }
 
-    /*Mentor creates room */
+    /* Mentor creates room */
     if (msg.type === "create-room") {
       const roomCode = uuidv4().slice(0, 6).toUpperCase();
 
@@ -70,23 +75,27 @@ wss.on("connection", (ws) => {
 
       currentRoom = roomCode;
       currentRole = "mentor";
-      currentName = "Mentor";
+      currentName = msg.name || "Mentor"; 
 
-      ws.send(JSON.stringify({
-        type: "room-created",
-        code: roomCode
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "room-created",
+          code: roomCode
+        })
+      );
     }
 
-    /*Student joins room*/
+    /* Student joins room  */
     if (msg.type === "join-room") {
       const room = rooms[msg.code];
 
       if (!room) {
-        ws.send(JSON.stringify({
-          type: "error",
-          text: "Invalid room code"
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "error",
+            text: "Invalid room code"
+          })
+        );
         return;
       }
 
@@ -96,13 +105,15 @@ wss.on("connection", (ws) => {
       currentName = msg.name;
 
       // SEND CHAT HISTORY
-      ws.send(JSON.stringify({
-        type: "history",
-        messages: room.messages
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "history",
+          messages: room.messages
+        })
+      );
     }
 
-    /*  Chat Message */
+    /* Chat Message */
     if (msg.type === "chat" && currentRoom) {
       const chat = {
         name: currentName,
@@ -117,19 +128,23 @@ wss.on("connection", (ws) => {
 
       // mentor
       if (room.mentor?.readyState === WebSocket.OPEN) {
-        room.mentor.send(JSON.stringify({
-          type: "chat",
-          ...chat
-        }));
+        room.mentor.send(
+          JSON.stringify({
+            type: "chat",
+            ...chat
+          })
+        );
       }
 
       // students
       room.students.forEach((s) => {
         if (s.readyState === WebSocket.OPEN) {
-          s.send(JSON.stringify({
-            type: "chat",
-            ...chat
-          }));
+          s.send(
+            JSON.stringify({
+              type: "chat",
+              ...chat
+            })
+          );
         }
       });
     }
